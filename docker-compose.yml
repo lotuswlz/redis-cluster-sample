@@ -1,0 +1,96 @@
+version: '3'
+
+networks:
+
+  redisnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.1.0.0/16
+
+services:
+  app:
+    image: javademo:0.2
+    container_name: javademo1
+    depends_on:
+      - redis-cluster
+    ports:
+      - 8081:8081
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.9
+  redis-cluster:
+    image: redis:latest
+    command: redis-cli -p 6379 --cluster create 10.1.0.11:6379 10.1.0.12:6379 10.1.0.13:6379 10.1.0.14:6379 10.1.0.15:6379 10.1.0.16:6379 --cluster-replicas 1 --cluster-yes
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-4
+      - redis-5
+      - redis-6
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.2
+    ports:
+      - 6379:6379
+
+  redis-1:
+    image: redis-cluster-node
+    environment:
+      X_REDIS_PORT: 6379
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.11
+#    ports:
+#      - 6379:6379
+
+  redis-2:
+    image: redis-cluster-node
+    environment:
+      X_REDIS_PORT: 6379
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.12
+#    ports:
+#      - 6379:6379
+
+  redis-3:
+    image: redis-cluster-node
+    environment:
+      X_REDIS_PORT: 6379
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.13
+#    ports:
+#      - 6379:6379
+
+  redis-4:
+    image: redis-cluster-node
+    environment:
+      X_REDIS_PORT: 6379
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.14
+#    ports:
+#      - 6379:6379
+
+  redis-5:
+    image: redis-cluster-node
+    environment:
+      X_REDIS_PORT: 6379
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.15
+#    ports:
+#      - 6379:6379
+
+  redis-6:
+    image: redis-cluster-node
+    environment:
+      X_REDIS_PORT: 6379
+    networks:
+      redisnet:
+        ipv4_address: 10.1.0.16
+#    ports:
+#      - 6379:6379
